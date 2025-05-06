@@ -1,5 +1,5 @@
-import { scrapeFromLinkedin } from "@/lib/apiHelper";
-// import { scrapeFromIndeed } from "@/lib/apiHelper";
+import { scrapeFromLinkedin } from "@/lib/scraper";
+import { scrapeFromIndeed } from "@/lib/scraper";
 import { getDate } from "@/lib/getDate";
 // export const runtime = "nodejs";
 
@@ -21,8 +21,8 @@ export async function POST(request: Request) {
   } else if (domain == "www.indeed.com") {
     console.log("scraping from indeed");
 
-    // const scrapedInfo = await scrapeFromIndeed(jobUrl);
-    // console.log(scrapedInfo.url);
+    const scrapedInfo = await scrapeFromIndeed(jobUrl);
+    console.log(scrapedInfo.url);
   }
   return Response.json({
     scraped: true,

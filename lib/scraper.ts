@@ -36,20 +36,20 @@ export async function scrapeFromLinkedin(jobUrl: string) {
   return { result, url };
 }
 
-// export async function scrapeFromIndeed(jobUrl: string) {
-//   //gets rid of all the random info in the middle of the url
-//   const jobUrlWithoutProtocol = jobUrl.split("https://")[1];
-//   const jobWithAdvertiseNumber = jobUrlWithoutProtocol.split("vjk=")[1];
-//   const jobUniqueNumberIdentifier = jobWithAdvertiseNumber.split("&advn")[0];
 
-//   const url = `www.indeed.com/viewjob?jk=${jobUniqueNumberIdentifier}`;
+export async function scrapeFromIndeed(jobUrl: string) {
+  //gets rid of all the random info in the middle of the url
+  const jobUrlWithoutProtocol = jobUrl.split("https://")[1];
+  const jobWithAdvertiseNumber = jobUrlWithoutProtocol.split("vjk=")[1];
+  const jobUniqueNumberIdentifier = jobWithAdvertiseNumber.split("&advn")[0];
 
-//   const { browser, page } = await initPuppeteer();
+  const url = `www.indeed.com/viewjob?jk=${jobUniqueNumberIdentifier}`;
 
-//   await page.goto(jobUrl);
-//   //   const jobTitle = await page.$eval('[data-testid="simpler-jobTitle"]', (el) => (el.textContent ? el.textContent.trim() : ""));
+  const { browser, page } = await initPuppeteer();
 
+  await page.goto(jobUrl);
+  //   const jobTitle = await page.$eval('[data-testid="simpler-jobTitle"]', (el) => (el.textContent ? el.textContent.trim() : ""));
 
-//   await browser.close();
-//   return { url };
-// }
+  await browser.close();
+  return { url };
+}
