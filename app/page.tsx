@@ -7,8 +7,9 @@ export default function Home() {
 
   async function handleButtonClick() {
     const response = await axios.post("/api/scraper", { jobUrl });
-    console.log("client response: ", response.data.test);
+    console.log("client response: ", response.data.scraped);
   }
+
   return (
     <div>
       <input

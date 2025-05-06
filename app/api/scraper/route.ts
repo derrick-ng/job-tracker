@@ -1,33 +1,30 @@
-import puppeteer from "puppeteer";
-export const runtime = "nodejs";
+import { scrapeFromLinkedin } from "@/lib/apiHelper";
+// import { scrapeFromIndeed } from "@/lib/apiHelper";
+import { getDate } from "@/lib/getDate";
+// export const runtime = "nodejs";
 
 export async function POST(request: Request) {
   const body = await request.json();
 
   const { jobUrl } = body;
+  // console.log(jobUrl);
 
-  const browser = await puppeteer.launch();
-  const page = await browser.newPage();
+  //check domain name
+  const newUrl = new URL(jobUrl);
+  const domain = newUrl.hostname;
 
-  await page.goto(jobUrl);
+  const date = getDate();
 
-  const result = await page.evaluate(() => {
-    const jobTitle = (document.querySelector(".top-card-layout__title") as HTMLElement)?.innerText;
-    const jobSalary = (document.querySelector(".salary") as HTMLElement)?.innerText;
+  if (domain == "www.linkedin.com") {
+    const scrapedInfo = await scrapeFromLinkedin(jobUrl);
+    console.log(scrapedInfo.result, scrapedInfo.url);
+  } else if (domain == "www.indeed.com") {
+    console.log("scraping from indeed");
 
-    const topCard = document.querySelector(".topcard__flavor-row");
-    if (!topCard) return null;
-
-    const companyName = (topCard.querySelector("a.topcard__org-name-link") as HTMLElement)?.innerText.trim();
-    const jobLocation = (topCard.querySelector("span.topcard__flavor--bullet") as HTMLElement)?.innerText.trim();
-
-    return { jobTitle, companyName, jobLocation, jobSalary };
-  });
-  console.log(result);
-
-  await browser.close();
-
+    // const scrapedInfo = await scrapeFromIndeed(jobUrl);
+    // console.log(scrapedInfo.url);
+  }
   return Response.json({
-    test: true,
+    scraped: true,
   });
 }
