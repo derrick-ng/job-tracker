@@ -11,6 +11,7 @@ export async function initPuppeteer() {
 }
 
 export async function scrapeFromLinkedin(jobUrl: string) {
+  //remove "unnecessary" parts of url
   const jobUrlWithoutProtocol = jobUrl.split("https://")[1];
   const url = jobUrlWithoutProtocol.split("/?")[0];
   console.log(url);
@@ -28,7 +29,7 @@ export async function scrapeFromLinkedin(jobUrl: string) {
 
     const company = (topCard.querySelector("a.topcard__org-name-link") as HTMLElement)?.innerText.trim();
     const location = (topCard.querySelector("span.topcard__flavor--bullet") as HTMLElement)?.innerText.trim();
-
+    // const location2 = location.split("·")[0].trim();
     return { role, company, location, salary };
   });
 

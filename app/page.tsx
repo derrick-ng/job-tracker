@@ -9,7 +9,7 @@ export default function Home() {
     e.preventDefault();
 
     const response = await axios.post("/api/scraper", { jobUrl });
-    console.log("client response: ", response.data.scraped);
+    console.log("client response, scraped: ", response.data.scraped);
   }
 
   return (
