@@ -21,14 +21,14 @@ export async function scrapeFromLinkedin(jobUrl: string) {
   await page.goto(jobUrl);
 
   const result = await page.evaluate(() => {
-    const role = (document.querySelector(".top-card-layout__title") as HTMLElement)?.innerText;
-    const salary = (document.querySelector(".salary") as HTMLElement)?.innerText;
+    const role = (document.querySelector(".top-card-layout__title") as HTMLElement)?.innerText ?? "n/a";
+    const salary = (document.querySelector(".salary") as HTMLElement)?.innerText ?? "n/a";
 
     const topCard = document.querySelector(".topcard__flavor-row");
     if (!topCard) return null;
 
-    const company = (topCard.querySelector("a.topcard__org-name-link") as HTMLElement)?.innerText.trim();
-    const location = (topCard.querySelector("span.topcard__flavor--bullet") as HTMLElement)?.innerText.trim();
+    const company = (topCard.querySelector("a.topcard__org-name-link") as HTMLElement)?.innerText ?? "n/a";
+    const location = (topCard.querySelector("span.topcard__flavor--bullet") as HTMLElement)?.innerText ?? "n/a";
     // const location2 = location.split("·")[0].trim();
     return { role, company, location, salary };
   });
