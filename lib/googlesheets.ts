@@ -6,12 +6,14 @@ interface ScrapedInfo {
   location: string;
   salary: string;
 }
+
 interface GoogleSheetsProp {
   jobInfo: ScrapedInfo;
   date: string;
   status: string;
   url: string;
 }
+
 const auth = new google.auth.GoogleAuth({
   credentials: {
     client_email: process.env.GOOGLE_CLIENT_EMAIL,
@@ -39,6 +41,7 @@ export async function insertIntoGoogleSheets({ jobInfo, date, status, url }: Goo
 
   await updateStatusWithDropdown();
 }
+
 async function updateStatusWithDropdown() {
   const sheets = google.sheets({
     auth,

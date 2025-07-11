@@ -1,21 +1,26 @@
 import { scrapeFromLinkedin } from "./helper/extensionScraper.js";
 import { getDate } from "./helper/getDate.js";
 
-async function getCurrentTabUrl() {
+//grab current tab unique id and url
+async function getCurrentTabInfo() {
+  console.log("getting most recently used tab");
   const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-  console.log("tab:", tab);
-  const currentTabUrl = tab.url;
-  console.log(currentTabUrl);
 
-  // return tab.url;
-  return currentTabUrl;
+  const tabId = tab.id;
+  const tabUrl = tab.url;
+  return { tabId, tabUrl };
 }
 
 document.getElementById("scrape-button").addEventListener("click", async () => {
   console.log("inside extension console");
 
+  const { tabId, tabUrl } = await getCurrentTabInfo();
+  const date = getDate();
+
+  //function/script to be inserted into browser from extension
+  // **(add later)** add tabUrl as a parameter, querySelector will be based off tabUrl
   function modifyDOM() {
-    console.log("new tab script: ");
+    console.log("script start");
     const salaryParentElement = document.querySelector(".job-details-fit-level-preferences");
     const salary = salaryParentElement?.querySelector("button:first-of-type span.tvm__text--low-emphasis strong")?.innerText ?? "n/a";
 
@@ -27,38 +32,13 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
     return { salary, company, role, location };
   }
 
-  //grab the current tab (id)
-  async function getCurrentTabId() {
-    console.log("getting tab");
-    const [tab] = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
-    console.log("tab id: ", tab.id);
-    return tab.id;
-  }
-
+  //go into the browser's current tab to execute javascript
   chrome.scripting
-    //go into the browser's current tab to execute javascript
     .executeScript({
-      target: { tabId: await getCurrentTabId() },
+      target: { tabId },
       func: modifyDOM,
     })
     //return back to extension
     .then((results) => console.log("returned from browser tab", results[0].result));
+    
 });
-
-async function main() {
-  const currentTabUrl = await getCurrentTabUrl();
-
-  const newUrl = new URL(currentTabUrl);
-  const domain = newUrl.hostname;
-
-  const date = getDate();
-  console.log("date", date);
-
-  if (domain == "www.linkedin.com") {
-    console.log("scraping");
-    const scrapedInfo = await scrapeFromLinkedin();
-    // console.log(scrapedInfo.result, scrapedInfo.url);
-  }
-}
-
-// main();
