@@ -16,9 +16,12 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
 
   const { tabId, tabUrl } = await getCurrentTabInfo();
 
-  const newUrl = new URL(tabUrl);
-  const domain = newUrl.hostname;
+  // used to check domain name (linkedin, indeed, etc)
+  const domain = new URL(tabUrl).hostname;
 
+  // clean url of the job posting, appending to spreadsheet
+  const jobUrlWithoutProtocol = tabUrl.split("https://")[1];
+  const url = jobUrlWithoutProtocol.split("/?")[0];
   const date = getDate();
   const status = "pending";
 
@@ -29,15 +32,18 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
 
     if (domain == "www.linkedin.com") {
       const salaryParentElement = document.querySelector(".job-details-fit-level-preferences");
-      const salary = salaryParentElement?.querySelector("button:first-of-type span.tvm__text--low-emphasis strong")?.innerText ?? "n/a";
+      let salary = salaryParentElement?.querySelector("button:first-of-type span.tvm__text--low-emphasis strong")?.innerText;
+      if (!salary || !salary.startsWith("$")) {
+        salary = "not provided";
+      }
 
       const locationParentElement = document.querySelector(".job-details-jobs-unified-top-card__primary-description-container");
       const location = locationParentElement?.querySelector("span.tvm__text--low-emphasis")?.innerText ?? "n/aaa";
 
       const company = document.querySelector(".job-details-jobs-unified-top-card__company-name")?.innerText ?? "n/a";
       const role = document.querySelector(".job-details-jobs-unified-top-card__job-title")?.innerText ?? "n/a";
-      
-      return { salary, company, role, location };
+
+      return { company, role, location, salary };
     }
   }
 
@@ -49,5 +55,17 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
       args: [domain],
     })
     //return back to extension
-    .then((results) => console.log("returned from browser tab", results[0].result));
+    .then((results) => {
+      console.log("returned from browser tab", results[0].result);
+      const { company, role, location, salary } = results[0].result;
+
+      const googleScriptsApp = "https://script.google.com/macros/s/AKfycbzA39q9czhtMgZZUmnnHd2rICBT81-vNtG--sOWiTynRtKFbqIh0n15GdeX2X_C9NN_qw/exec";
+      const data = new URLSearchParams({ date, company, role, location, salary, status, url });
+
+      // can not add header "Content-Type": "application/json" because of cors error
+      fetch(googleScriptsApp, {
+        method: "POST",
+        body: data,
+      });
+    });
 });

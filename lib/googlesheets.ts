@@ -39,7 +39,7 @@ export async function insertIntoGoogleSheets({ jobInfo, date, status, url }: Goo
     },
   });
 
-  await updateStatusWithDropdown();
+  // await updateStatusWithDropdown();
 }
 
 async function updateStatusWithDropdown() {
