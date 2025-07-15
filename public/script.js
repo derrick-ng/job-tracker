@@ -64,7 +64,8 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
 
       //try catch will catch run time errors, do not need response/server side error handling
       try {
-        // by default, extension fetch is no-cors, so cant send as json. adding extra line to remove browser error.
+        // by default, extension fetch is no-cors, so cant send data as json. adding extra line to remove browser error.
+        // no-cors means the (browser) javascript will not be able to access the response, so its empty
         await fetch(googleScriptsApp, {
           method: "POST",
           body: data,
