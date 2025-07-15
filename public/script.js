@@ -38,7 +38,7 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
       }
 
       const locationParentElement = document.querySelector(".job-details-jobs-unified-top-card__primary-description-container");
-      const location = locationParentElement?.querySelector("span.tvm__text--low-emphasis")?.innerText ?? "n/aaa";
+      const location = locationParentElement?.querySelector("span.tvm__text--low-emphasis")?.innerText ?? "n/a";
 
       const company = document.querySelector(".job-details-jobs-unified-top-card__company-name")?.innerText ?? "n/a";
       const role = document.querySelector(".job-details-jobs-unified-top-card__job-title")?.innerText ?? "n/a";
@@ -55,17 +55,23 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
       args: [domain],
     })
     //return back to extension
-    .then((results) => {
+    .then(async (results) => {
       console.log("returned from browser tab", results[0].result);
       const { company, role, location, salary } = results[0].result;
 
-      const googleScriptsApp = "https://script.google.com/macros/s/AKfycbzA39q9czhtMgZZUmnnHd2rICBT81-vNtG--sOWiTynRtKFbqIh0n15GdeX2X_C9NN_qw/exec";
+      const googleScriptsApp = "https://script.google.com/macros/s/AKfycbz1NKfwR4VUIo-CMFH_fA2HKf-TeVXyGvmAXWlu11x32nhwz144Lmvi654_fpo-k228nw/exec";
       const data = new URLSearchParams({ date, company, role, location, salary, status, url });
 
-      // can not add header "Content-Type": "application/json" because of cors error
-      fetch(googleScriptsApp, {
-        method: "POST",
-        body: data,
-      });
+      //try catch will catch run time errors, do not need response/server side error handling
+      try {
+        // by default, extension fetch is no-cors, so cant send as json. adding extra line to remove browser error.
+        await fetch(googleScriptsApp, {
+          method: "POST",
+          body: data,
+          mode: "no-cors",
+        });
+      } catch (error) {
+        console.error("error sending fetch request", error);
+      }
     });
 });
