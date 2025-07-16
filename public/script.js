@@ -25,7 +25,6 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
   const status = "pending";
 
   //function/script to be inserted into browser from extension
-  // **(add later)** add tabUrl as a parameter, querySelector will be based off tabUrl
   function modifyDOM(domain) {
     console.log("script start");
 
@@ -67,14 +66,14 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
         return;
       }
 
-      const googleScriptsApp = "https://script.google.com/macros/s/AKfycbz1NKfwR4VUIo-CMFH_fA2HKf-TeVXyGvmAXWlu11x32nhwz144Lmvi654_fpo-k228nw/exec";
+      const googleScriptsAppEndpoint = "https://script.google.com/macros/s/AKfycbz1NKfwR4VUIo-CMFH_fA2HKf-TeVXyGvmAXWlu11x32nhwz144Lmvi654_fpo-k228nw/exec";
       const data = new URLSearchParams({ date, company, role, location, salary, status, url });
 
       //try catch will catch run time errors, do not need response/server side error handling
       try {
         // by default, extension fetch is no-cors, so cant send data as json. adding extra line to remove browser error.
         // no-cors means the (browser) javascript will not be able to access the response, so its empty
-        await fetch(googleScriptsApp, {
+        await fetch(googleScriptsAppEndpoint, {
           method: "POST",
           body: data,
           mode: "no-cors",
