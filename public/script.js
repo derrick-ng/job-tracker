@@ -34,7 +34,7 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
       const salaryParentElement = document.querySelector(".job-details-fit-level-preferences");
       let salary = salaryParentElement?.querySelector("button:first-of-type span.tvm__text--low-emphasis strong")?.innerText;
       if (!salary || !salary.startsWith("$")) {
-        salary = "not provided";
+        salary = "n/a";
       }
 
       const locationParentElement = document.querySelector(".job-details-jobs-unified-top-card__primary-description-container");
@@ -45,6 +45,8 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
 
       return { company, role, location, salary };
     }
+
+    alert("This extension is currently only available for linkedin");
   }
 
   //go into the browser's current tab to execute javascript
@@ -58,6 +60,13 @@ document.getElementById("scrape-button").addEventListener("click", async () => {
     .then(async (results) => {
       console.log("returned from browser tab", results[0].result);
       const { company, role, location, salary } = results[0].result;
+
+      //do not track job if no info is found, send a popup
+      if (company == "n/a" && role == "n/a" && location == "n/a" && salary == "n/a") {
+        // throw Error("unable to scrape job info")
+        alert("unable to scrape job info");
+        return;
+      }
 
       const googleScriptsApp = "https://script.google.com/macros/s/AKfycbz1NKfwR4VUIo-CMFH_fA2HKf-TeVXyGvmAXWlu11x32nhwz144Lmvi654_fpo-k228nw/exec";
       const data = new URLSearchParams({ date, company, role, location, salary, status, url });
