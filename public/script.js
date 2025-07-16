@@ -1,4 +1,3 @@
-import { scrapeFromLinkedin } from "./helper/extensionScraper.js";
 import { getDate } from "./helper/getDate.js";
 
 //grab current tab unique id and url
