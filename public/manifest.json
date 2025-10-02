@@ -1,10 +1,10 @@
 {
   "name": "Job Scraper",
-  "descriptions": "Generic Extension",
+  "description": "Generic Extension",
   "version": "1.0",
   "manifest_version": 3,
   "action": {
     "default_popup": "extension.html"
   },
-  "permissions": ["activeTab", "scripting", "<all_urls>"]
+  "permissions": ["activeTab", "scripting"]
 }
